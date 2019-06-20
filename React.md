@@ -6,6 +6,14 @@ react 三件套：react 、react-dom 、react-scripts、    react-rn（原生DOM
 
 
 
+**特性**：
+
+1. props:组件属性，专门用来连接父子组件间通信，父组件传输父类成员，子组件可以利用但不能编辑父类成员；
+
+2. state：专门负责保存和改变组件内部的状态；
+
+   
+
 ### JSX语法
 
 react是使用的 `JSX` 语法，而Vue使用的是 ` 插值表达式` ;
@@ -208,6 +216,191 @@ export default class TodoHeader extends Component {
     }
 }
 ```
+
+
+
+### 组件
+
+**创建组件**
+
+在react中创建组件的形式有三种
+
+- 纯函数式定义的无状态组件
+- React.createClass 定义的组件
+- Extends React.Component 定义的组件
+
+
+
+1. **函数式定义的无状态组件**
+
+* 组件不能访问this对象
+
+* 函数式组件的代码量比类组件要少，所以函数式组件相比类组件更简洁
+
+* 是基于**`无状态思想（Stateless Components）`**，无法使用state，也无法使用组件的生命周期方法，这就决定了函数组件都是 ` 展示性组件（Presentational Components）`，接收Props，渲染DOM，而不关注其他逻辑。
+
+  即：`无状态组件只能访问输入的props`,无副作用
+
+* 组件不会被实例化,整体渲染性能得到提升
+
+
+
+2. **类组件**
+
+3. 受控型组件
+
+   1. 受控组件：组件的状态变化受到state的控制；
+
+   2. 非受控组件：该组件内部的状态是受state控制；组件的变化不易管理
+
+      模式：
+
+      ```
+       组件的值----state控制；
+       组件值得变换---通过触发onChange事件，然后由this.setState负责改变；
+      ```
+
+4. 无状态组件： 
+
+   1. 若一个组件不含有状态和对状态的处理，则可以将render方法单独抽取出来，成为一个独立的组件
+   2. 无状态组件转化为有状态组件，则通过高阶组件转化；方式就是高阶组件通过props传入state。
+
+   特点： 
+
+   ```
+   1. 不包含任何状态，但可以包含属性；
+   2. 无状态组件生成时不用实例化；
+   3. 无状态组件没有this，ref和生命周期；
+   ```
+
+   作用：
+
+   ```
+   1. 单纯的UI表现，不用涉及太多的交互；
+   2. 不用对DOM做过多的操作；
+   ```
+
+   
+
+5. 高阶组件
+
+   一个包含了另一个React组件的React组件；本质上就是一个函数.
+
+   包装方式：`属性代理和反向代理`；
+   特点：不会改变被包装组件的内容，结构，不会复制它的行为，是利用它创建一个新的行为；
+
+   - 属性代理
+
+     定义：高阶组件接受外界实行，然后通过包装环境传递给被包装组件；
+
+     Name : 可以指定返回组件的名称；
+     
+   - 反向代理
+   
+     定义：指定的组件作为另一个组件的父类，而继承了的组件就是一个高阶组件
+     特点：
+   
+     	1. 该组件是被动被继承；
+     	2）高阶组件可以通过this来获取父类的state，props，生命周期函数和渲染函数；
+     3）一般来说，若调用父类的生命周期和渲染函数，用super来调用，以便保护父类的生命周期和渲染函数；
+     
+      	2. 优势：
+          渲染劫持：高阶组件通过props属性来决定父类的渲染树是否被渲染（props不能创建或者改变props的名称，但可以更改和操作props的值）；
+
+​     
+
+### Context
+
+Context 提供了一个无需为每层组件手动添加 props，就能在组件树间进行数据传递的方法。
+
+API:
+
+* React.createContext
+* Context.Provider
+* Context.Consumer
+
+相当于
+
+* 保存全局的共享资源，使用 Provider
+
+* 获取全局的共享资源，使用 Consumer
+
+
+
+Context使用
+
+```js
+# 引入Context
+import React, { Component, createContext } from 'react'
+
+# 创建Context，解构出 Provider 和 Comsumer；
+const {
+    Provider,
+    Consumer: CounterConsumer  // 解构Consumer并重新赋值到 CounterConsumer 里面去
+} = createContext()
+
+# 自定义 Provider 组件
+class CounterProvider extends Component {
+    render（）{
+        return（
+        <Provider
+        	value={}   		// 将需要全局共享的资源作为 <Provider> 元素的 value 属性值
+        ></Provider>
+        ）
+    }
+}
+render(
+    <CounterProvider>
+        <Counter />
+    </CounterProvider>,
+    document.querySelector('#root')
+)
+
+# 自定义 Consumer 组件
+class Counter extends Component {
+    render () {
+        return (
+            // Cosumer是一个函数
+            <CounterConsumer>
+                {
+                    // 函数参数就是在 Provider 的 value 中共享的资源 {}
+                    (arg) => {
+                        const {count} = arg
+                        console.log(arg)
+                        return (
+                            <>
+                            	....
+                            </>
+                        )
+                    }
+                }
+            </CounterConsumer>
+        )
+    }
+}
+```
+
+
+
+### 将函数组件转换成 class 组件
+
+通过以下五步将 `Clock` 的函数组件转成 class 组件：
+
+1. 创建一个同名的 [ES6 class](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Classes)，并且继承于 `React.Component`。
+2. 添加一个空的 `render()` 方法。
+3. 将函数体移动到 `render()` 方法之中。
+4. 在 `render()` 方法中使用 `this.props` 替换 `props`。
+5. 删除剩余的空函数声明。
+
+
+
+
+
+
+
+
+
+
 
 
 
