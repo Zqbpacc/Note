@@ -394,15 +394,313 @@ class Counter extends Component {
 
 
 
+### 生命周期
+
+生命周期：**挂载--- 更新--- 卸载**
+
+**挂载**
+
+当组件实例被创建并插入 DOM 中时，其生命周期调用顺序如下：
+
+* constructor()
+* static getDerivedStateFromProps()
+* render()
+* componentDidMount()
+  * `componentDidMount()` 会在组件挂载后（插入 DOM 树中）立即调用。依赖于 DOM 节点的初始化应该放在这里。
+
+**更新**
+
+当组件的 props 或 state 发生变化时会触发更新。组件更新的生命周期调用顺序如下：
+
+* static getDerivedStateFromProps()
+* shouldComponentUpdate()
+  * 如果 [`shouldComponentUpdate()`](https://react.docschina.org/docs/react-component.html#shouldcomponentupdate) 返回值为 false，则不会调用 （性能优化方式）
+* render()
+* getSnapshotBeforeUpdate()
+* componentDidUpdate()
+
+**卸载**
+当组件从 DOM 中移除时会调用如下方法：
+
+* componentWillUnmount()
+  * 在组件卸载及销毁之前直接调用
+
+![ReactLiftCycle](E:\React\ReactLiftCycle.png)
+
+
+
+### Hook
+
+**概念**：让你在不编写 class 的情况下使用 state 以及其他的 React 特性。
+
+* State Hook
+* Effect Hook     *Effect Hook* 可以让你在函数组件中执行副作用操作
+
+
+
+### redux
+
+**概念**： **Redux 是 JavaScript 状态容器，提供可预测化的状态管理。**可以让你构建一致化的应用，运行于不同的环境（客户端、服务器、原生应用），并且易于测试。
+
+包括：`动机、核心概念、三大原则`
+
+安装：
+
+```bash
+$ npm install --save redux
+
+# react 绑定库和开发者工具
+$ npm install --save react-redux
+$ npm install --save-dev redux-devtools
+```
+
+引入redux：
+
+```js
+import { createStore } from 'redux'
+
+// 创建 Redux store 来存放应用的状态。
+// API 是 { subscribe, dispatch, getState }。
+const store = createStore(renducer)
+
+// 可以手动订阅更新，也可以事件绑定到视图层。
+store.subscribe(() => console.log(store.getState()))
+
+// 改变内部 state 惟一方法是 dispatch 一个 action。
+
+console.log(store) // dispatch-   getState等参数
+// getState就是state初始化的数据的数组
+```
+
+渲染： 
+
+1. 引入 `redux` ，创建 `store` 实例， 
+2. 引入纯函数 `reducer` 关联的 `state` 和`action` ，
+3. 通过父传子 `this.props.store.getState()` 方法获取到 `state `初始化的内容；
+4. 创建储存内容的变量，遍历变量，绑定 key 的 `ID` ，通过 `JSX` 语法渲染
+
+
+
+绑定事件：
+
+1. `onClick ={}`；点击事件里面是一个函数；
+2. 通过 `dispatch（`） 方法 把 action 发送到 `renducer `里面；
+3. 初始化设置为空，设置`componentDidMonut()` 方法 渲染；
+
+
+
+多个reducers时：
+
+1. 通过新建一个 `reducers` 目录下的 `index.js` 文件
+2. 从 redux 引入 `combineReducers`  进行合并
+
+```js
+import { combineReducers } from 'redux'
+
+import  xx from './xx'
+
+export default combineReducers({
+    xx,
+    ...
+})
+```
 
 
 
 
 
+##### 动机
+
+**JavaScript 需要管理比任何时候都要多的 state （状态）**state 可能包括服务器响应、缓存数据、本地生成尚未持久化到服务器的数据，也包括 UI 状态，如激活的路由，被选中的标签，是否显示加载动效或者分页器等等。
 
 
 
+##### 核心概念
+
+* **state**
+
+是一个对象，保存状态数据，不能直接修改state对象属性值
+
+* **action**
+
+是一个普通的对象，在 action 对象中必须包含一个 type 属性，指明动作类型，修改状态时所需要使用到的数据通常在 action 对象中使用 payload 属性来携带。（修改state状态就在action里面修改。）
+
+```js
+# reducers
+# 可新建reducers的文件夹 放要修改的东西
+//状态初始化的内容
+const initState = []	// 可能是一个对象
+
+// 暴露出去
+// 这是一个 reducer，形式为 (state, action) => state 的纯函数。
+// 使用 `switch` 语句和字符串来做判断
+export default (state = initState, action) => {
+    // 判断，更新状态
+    switch (action.type) {
+        
+    }
+}
+```
 
 
 
+##### 三大原则
+
+* **单一数据源**
+
+整个应用的 state 被储存在一棵 object tree 中，并且这个 object tree 只存在于唯一一个 store 中
+
+* **State 是只读的**
+
+唯一改变 state 的方法就是触发（dispatch） action，action 是一个用于描述已发生事件的普通对象。
+
+* **使用纯函数来执行修改**
+
+为了描述 action 如何改变 state tree ，你需要编写 reducers
+
+
+
+### React redux
+
+官网： https://react-redux.js.org
+
+connect()	连接
+
+provider()	共享的
+
+```bash
+# 安装
+$ npm install --save react-redux
+```
+
+```js
+// 引入
+import { Provider,Connect } from 'react-redux'
+
+render(
+  // 通过<Proider store={}>  传输共享的数据     </Provider>
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.querySelector("#root")
+)
+```
+
+
+
+### react-router
+
+```bash
+# 安装和引入
+$ react-route-dom
+```
+
+* BrowserRouter ( history 模式)
+
+  ```js
+  import { BrowserRouter } from 'react-router-dom'
+  
+  <BrowserRouter
+    basename={optionalString}// 基名
+    forceRefresh={optionalBool}// 强制刷新
+    getUserConfirmation={optionalFunc}//  getUserConfirmation
+    keyLength={optionalNumber}
+  >
+    <App/>
+  </BrowserRouter>
+  ```
+
+* HashRouter（ Hash 模式 ( # )）
+
+  ```js
+  import { HashRouter } from 'react-router-dom'
+  
+  <HashRouter>
+    <App/>
+  </HashRouter>
+  ```
+
+* Link（点击跳转）
+
+  ```js
+  import { Link } from 'react-router-dom'
+  
+  <Link to="/about">首页</Link>
+  或
+  <Link to="/courses?sort=name" />
+  ```
+
+* Redirect（重定向）
+
+  * exact 精确的
+
+  ```js
+  <Redirect to="/Home" />
+  或
+  <Redirect
+    to={{
+      pathname: "/login",
+      search: "?utm=your+face",
+      state: { referrer: currentLocation }
+    }}
+  />
+  或
+  <Redirect from="/accounts" to="/users" />
+      
+  ```
+
+* Route 配置路由路径（设置跳转路径 path 、组件 component ）
+
+  ```js
+  import { BrowserRouter as Router, Route } from 'react-router-dom'
+  
+  <Router>
+    <div>
+      <Route exact path="/" component={Home}/>
+      <Route path="/news" component={NewsFeed}/>
+      <Route path="/news" render={
+          () => {
+              return () {
+                  <div>
+                  </div>
+              }
+          }
+      }/>
+    </div>
+  </Router>
+  ```
+
+* Switch（类似 js中的 switch 标签）
+
+  ```js
+  <Switch>
+    <Route exact path="/" component={Home}/>
+    <Route path="/:user" component={User}/>
+    <Route component={NoMatch}/>
+        ...
+  </Switch>
+  ```
+
+
+
+###  UI（Ant Design）
+
+`antd` 是基于 Ant Design 设计体系的 React UI 组件库，主要用于研发企业级中后台产品。
+
+**特性**：
+
+- 提炼自企业级中后台产品的交互语言和视觉风格。
+- 开箱即用的高质量 React 组件。
+- 使用 TypeScript 构建，提供完整的类型定义文件。
+- 全链路开发和设计工具体系。
+
+
+
+```bash
+# 安装
+$ npm install antd --save
+$ yarn add antd
+或
+使用 script 和 link 标签直接引入文件，并使用全局变量 antd。
+```
 

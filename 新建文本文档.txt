@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .check span {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+    }
+    input {
+      display: none;
+    }
+    input:checked + span{
+      background: red;
+      border: 1px solid red;
+      position: relative;
+
+    }
+    .a:checked + span::after{
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 7px;
+      left: 2px;
+      top: 4px;
+      border: 2px solid #fff;
+      border-radius: 2px;
+      transform: rotate(-45deg);
+      border-width: 0 0 2px 2px
+    }
+  </style>
+</head>
+<body>
+  <label class="check">
+    <input type="checkbox" class="a">
+    <span></span>¼Ç×¡ÃÜÂë
+  </label>
+</body>
+</html>
