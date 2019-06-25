@@ -544,6 +544,8 @@ export default (state = initState, action) => {
 
 
 
+
+
 ##### 三大原则
 
 * **单一数据源**
@@ -588,11 +590,23 @@ render(
 
 
 
-### react-router
+### react-router-dom
 
 ```bash
-# 安装和引入
-$ react-route-dom
+# 安装
+$ npm install --save react-router-dom
+```
+
+```js
+// 引用
+import { HashRouter as Router } from 'react-router-dom'
+
+render(
+  <Router>
+    <App />
+  </Router>,
+  document.querySelector("#root")
+)
 ```
 
 * BrowserRouter ( history 模式)
@@ -680,6 +694,8 @@ $ react-route-dom
         ...
   </Switch>
   ```
+
+
 
 
 

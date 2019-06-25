@@ -370,10 +370,12 @@ ViewModel 将视图中的状态和用户的行为分离出一个抽象，
 
 ## 什么是 Virtual DOM？为什么 Virtual DOM 比原生 DOM 快？
 
+vdom可以看作是一个使用javascript模拟了DOM结构的树形结构，这个树结构包含整个DOM结构的信息
+
 特点：
 
-1. 将 Virtual DOM 作为一个兼容层，让我们还能对接非 Web 端的系统，实现跨端开发。
-2. 同样的，通过 Virtual DOM 我们可以渲染到其他的平台，比如实现 SSR、同构渲染等等。
+1. 将 Virtual DOM 作为一个兼容层，还能对接非 Web 端的系统，实现跨端开发。
+2. 同样的，通过 Virtual DOM 我们可以渲染到其他的平台，比如实现 SSR（服务端渲染）、同构渲染等等。
 3. 实现组件的高度抽象化
 
 
