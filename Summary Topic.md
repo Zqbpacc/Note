@@ -357,6 +357,37 @@
     fib(10)
     ```
 
+25. export default 和 module.export 的区别？
+
+    CommonJS规范：
+
+    CommonJS定义的模块分为: 模块标识(module)、模块定义(exports) 、模块引用(require)
+
+    ```txt
+    require: node 和 es6 都支持的引入(CommonJS规范)
+    export / import : 只有es6 支持的导出引入
+    module.exports / exports: 只有 node 支持的导出(CommonJS规范)
+    exports = module.exports 都指向同一个内存地址
+    
+    1. require方法用于加载模块;
+    2. module变量代表当前模块。这个变量是一个对象，module对象会创建一个叫exports的属性，这个属性的默认值是一个空的对象：
+    3. export 对应的 import，相当于 export { default sa }  from "";
+    4. export default在一个模块中只能有一个，当然也可以没有。export在一个模块中可以有多个。
+    5. export default的对象、变量、函数、类，可以没有名字。export的必须有名字。
+    6. export default对应的import和export有所区别
+    ```
+
+    ```
+    ES6
+    export 和 export default的区别:
+    
+    1. 在一个文件或模块中，export、import可以有多个，export default仅有一个
+    2. 通过export方式导出，在导入时要加{ }，export default则不需要
+    3. export能直接导出变量表达式，export default不行。
+    ```
+
+    
+
     
 
    
