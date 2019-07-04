@@ -720,3 +720,187 @@ $ yarn add antd
 使用 script 和 link 标签直接引入文件，并使用全局变量 antd。
 ```
 
+* 安装 AntD 包
+
+* 高级配置 `AntD`， 按需引入样式 ，`js` 等
+
+  安装**`react-app-rewired customize-cra` **、
+
+* 设置 `package.json` 弹射
+
+* 创建 `config-overrides.js`文件
+
+* 使用 **`babel-Pulgin-import`**（按需引入的包）
+
+* 配置完毕后需要重启任务 `npm start`
+
+  - 这里是配置` antd` :
+
+  1. 先使用 cra 创建应用
+  2. 添加 antd 支持
+
+```bash
+$ npm i antd -S
+```
+
+​			3.配置按需引入，先安装包
+
+```bash
+$ npm i react-app-rewired customize-cra babel-plugin-import -D
+```
+
+```js
+/* package.json */
+"scripts": {
+-   "start": "react-scripts start",
++   "start": "react-app-rewired start",
+-   "build": "react-scripts build",
++   "build": "react-app-rewired build",
+-   "test": "react-scripts test",
++   "test": "react-app-rewired test",
+}
+```
+
+​		4.创建配置文件 config-overrides.js
+
+```js
+const { override, fixBabelImports } = require('customize-cra');
+module.exports = override(
+    fixBabelImports('import', {
+        libraryName: 'antd',
+      libraryDirectory: 'es',
+        style: 'css',
+  }),
+)
+```
+
+5. 在需要使用 antd 组件的地方引入即可
+
+6. 国际化( 中文 )
+
+   ```js
+   import { LocaleProvider } from 'antd'
+   import zhCN from 'antd/es/locale-provider/zh_CN'
+   
+   <LocaleProvider locale={zhCN}>
+   <App />
+   </LocaleProvider>
+   ```
+
+   
+
+* 若是要自定义主题
+
+  * 安装  ` less`  和 `less-loader` (Vue里面的 `sass` 和 ` node-sass` )
+
+    ```
+    yarn add less less-loader
+    ```
+
+  * 配置  `package.json `  和  `config-overrides.js`
+  
+    ```
+    - const { override, fixBabelImports } = require('customize-cra');
+    + const { override, fixBabelImports, addLessLoader } = require('customize-cra');
+    
+    module.exports = override(
+      fixBabelImports('import', {
+        libraryName: 'antd',
+        libraryDirectory: 'es',
+    -   style: 'css',
+    +   style: true,
+      }),
+    + addLessLoader({
+    +   javascriptEnabled: true,
+    +   modifyVars: { '@primary-color': '#1DA57A' },
+    + }),
+    );
+    
+    如果你在使用 babel-plugin-import 的 style 配置来引入样式，需要将配置值从 'css' 改为 true，这样会引入 less 文件。
+    
+    如果你是通过 'antd/dist/antd.css' 引入样式的，改为 antd/dist/antd.less
+    ```
+  
+  * 修改主题的内容一般新建的文件 `  theme.js `， 最后通过 `module.export` 导出，在 `config-overrides.js `文件里面引入。
+  
+    ```js
+    定制的样式：
+    @primary-color: #1890ff; // 全局主色
+    @link-color: #1890ff; // 链接色
+    @success-color: #52c41a; // 成功色
+    @warning-color: #faad14; // 警告色
+    @error-color: #f5222d; // 错误色
+    @font-size-base: 14px; // 主字号
+    @heading-color: rgba(0, 0, 0, 0.85); // 标题色
+    @text-color: rgba(0, 0, 0, 0.65); // 主文本色
+    @text-color-secondary : rgba(0, 0, 0, .45); // 次文本色
+    @disabled-color : rgba(0, 0, 0, .25); // 失效色
+    @border-radius-base: 4px; // 组件/浮层圆角
+    @border-color-base: #d9d9d9; // 边框色
+    @box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15); // 浮层阴影
+    
+    （改成字符串）
+    less@
+    sass $
+    ```
+  
+    
+
+
+
+### 复文本编辑
+
+wangeditor 和  Ueditor
+
+原理：` contenteditable ` 和 `document.execCommand`
+
+```html
+  <button onclick="bold()">加粗</button>
+  <button onclick="bigger()">加大</button>
+  <button onclick="changeColor()">变色</button>
+
+  <script>
+    function bold() {
+      document.execCommand('bold')
+    }
+
+    function bigger() {
+      document.execCommand('fontSize', null, '7')
+    }
+
+    function changeColor() {
+      document.execCommand('foreColor', null, '#f00')
+    }
+  </script>
+```
+
+
+
+
+
+### Immutabe Data
+
+​		一旦创建就不能更改的数据， 对 `immutable `对象的任何修改添加或者删除，都会创建一个新的 `immutable` 对象。
+
+（持久化数据据结构）
+
+npm包：`redux-immutable`
+
+《函数式编程》
+
+
+
+### Mobx
+
+状态管理（类似React中的 redux）
+
+官网： https://cn.mobx.js.org
+
+
+
+### 可视化图表
+
+echarts / D3 / AntV    数据可视化图
+
+- echars.baidu.com  查看文档
+- 安装 导入
