@@ -6,6 +6,18 @@ vue.js : 即 **`渐进式JavaScript框架`** ;
 
 Vue CLI ： https://cli.vuejs.org/
 
+* 拉取2.X版本的Vue项目？
+
+  ​	Vue CLI >= 3 和旧版使用了相同的 vue 命令，所以 Vue CLI 2 (vue-cli) 被覆盖了。如果你仍然需要使用旧版本的 vue init 功能，需要安装一个桥接工具.
+
+  ```bash
+  $ npm install -g @vue/cli-init
+  # `vue init` 的运行效果将会跟 `vue-cli@2.x` 相同
+  vue init webpack my-project
+  ```
+
+  
+
 * Vue是基于MVVM模式运行的，什么是MVVM？
 
 ```txt
@@ -22,6 +34,28 @@ MVVM的优点：
 
 	MVVM 最好配合 binding 机制，Model 的变化需要同步到 View Model，View Model 的变化也需要同步到 View。ReactiveCocoa 就可以用来实现 binding，当然它能做的远远不止 binding。
 ```
+
+
+
+* Loadsh的防抖动函数
+
+  _debouce
+
+  
+
+* Loadsh的节流函数
+
+  _lang
+
+  
+
+* _difference 方法
+
+  _difference([1,2,3,4,5,], [1,2]）就会把后面数组的值有哪些就会在前面的妈的数组拿出来
+
+  
+
+* _pull 删除
 
 
 
