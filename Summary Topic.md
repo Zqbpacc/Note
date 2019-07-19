@@ -382,7 +382,7 @@ exports = module.exports 都指向同一个内存地址
 
 1. require方法用于加载模块;
 2. module变量代表当前模块。这个变量是一个对象，module对象会创建一个叫exports的属性，这个属性的默认值是一个空的对象：
-3. export 对应的 import，相当于 export { default sa }  from "";
+3. export 对应的 import，相当于 export { default as }  from "";
 4. export default在一个模块中只能有一个，当然也可以没有。export在一个模块中可以有多个。
 5. export default的对象、变量、函数、类，可以没有名字。export的必须有名字。
 6. export default对应的import和export有所区别
@@ -405,7 +405,7 @@ cookie，localStorage，sessionStorage，indexDB
 
 |   特性   |             cookie             |      localStorage      | sessionStorage |        indexDB         |
 | :------: | :----------------------------: | :--------------------: | :------------: | :--------------------: |
-| 生命周期 | 有服务器生成，可以设置过期时间 | 除非被清理否则一直存在 | 页面关闭就清理 | 除非被清理否则一直存在 |
+| 生命周期 | 由服务器生成，可以设置过期时间 | 除非被清理否则一直存在 | 页面关闭就清理 | 除非被清理否则一直存在 |
 |   大小   |               4K               |           5M           |       5M       |           5M           |
 
 Service Worker 是运行在浏览器背后的**独立线程**，一般可以用来实现缓存功能。使用 Service Worker的话，传输协议必须为 **HTTPS**。因为 Service Worker 中涉及到请求拦截，所以必须使用 HTTPS 协议来保障安全。
@@ -925,11 +925,536 @@ else
 
 ​	兼容老的CSS代码；
 
+Less是基于JavaScript，是在客户端处理的。
+
+Sass是基于Ruby的，是在服务器端处理的。
+
+
+
+### 创建函数的方式
+
+1. 函数表达式
+2. 函数声明
+3. Class构造器
+
+```js
+// 函数表达式
+var fn = function () {}
+// 函数声明
+function fn () {}
+// class构造器
+var fn = new Function()
+```
+
+
+
+### 创建对象的方式
+
+​	1、字面量  var obj = {}
+
+​    2、通过new运算符 var obj = new Object()
+
+​    3、构造函数
+
+​            用来构造（创建）对象的函数
+
+​            他在声明的时候跟普通函数没有区别
+
+​            用new运算符加上函数的调用，调用的结果就是一个对象
+
+​            构造函数中的this指的是即将要new的那个对象
+
+​    4、ES6语法糖
+
+
+
+### 什么是模块化
+
+​		函数封装   --->  对象   --->  立即执行函数   --->  模块化规范
+
+​		是一种项目的构架模式， 这种构架模式让JS代码重用性变得非常高，让项目构架的一些复杂问题全部得以解决。如：多个script标签不会再出现了，我们只要用一个script标签进行引入就可以了。
+
+AMD规范、CMD规范、COMMONJS
+
+
+
+### Vue.nextTick
+
+​		在下次 DOM 更新循环结束之后执行延迟回调。在修改数据之后立即使用这个方法，获取更新后的 DOM。
+
+
+
+### 原生 JS **中 call()、apply()、bind() **方法有什么区别
+
+三个方法都可以改变函数运行时的 this 指向。
+
+三个方法第一个参数都是函数调用执行时this 指向的对象。call() 方法第二个参数是个可变参数，是函数调用执行时本身所需要的参数，apply() 方法第二个参数是数组或arguments。call()与apply()都是立即调用函数执行，在运行时修改this指向。bind()是返回一个新的函数，新函数的函数主体与原函数的函数主体一致，当新函数被调用时，函数体中 this 指向的是 bind() 方法第一个参数传递的对象，而bind() 方法不会影响原函数本身的this 指向。
+
+
+
+### vue-组件间的通信
+
+#### **1.父子组件的通信**
+
+- **1.父组件利用props向子组件传输数据**
+
+  ​		当props中接收的是父组件传递的引用类型（对象或者是数组）时，在子组件中对数据改变时，父组件中的数据也会相应的改变，因为两者是指向的同一地址内存。如果不想子组件的改变影响父组件可以利用深拷贝，将接受的数据进行深拷贝后在子组件中使用，而不直接操作接受的数据。
+
+- **2.子组件向父组件传递参数利用事件机制**
+  子组件通过`this.$emit()`派发事件，父组件利用`v-on`对事件进行监听，实现参数的传递
+
+  ```js
+  //子组件：
+     this.$emit('changeCart',event.target)/*向父组件派发事件，同时传递参数event.target,后面的参数的个数不限*/
+  //父组件：
+  <v-cartcontrol :food="food" v-on:changeCart="changeCart"></v-cartcontrol>
+  <v-cartcontrol :food="food" @changeCart="changeCart"></v-cartcontrol>
+  ```
+
+- **3.利用ref属性可以获取到dom元素或者是子组件，从而可以调用子组件的方法（注意2.0版本用ref取代了el）**
+  1、当ref直接定义在dom元素上时，则通过`this.$refs.name`可以获取到dom对dom进行原生的操作.(ref属性不崩使用驼峰命名，获取元素也是)
+
+#### **2.非父子组件的通信**
+
+- **使用eventBus**
+
+  ```js
+  //非父子关系的两个组件之间也需要通信。在简单的场景下，可以使用一个空的 Vue 实例作为事件总线：
+  var bus = new Vue()  
+  // 触发组件 A 中的事件  
+  bus.$emit('id-selected', 1)  
+  // 在组件 B 创建的钩子中监听事件  
+  bus.$on('id-selected', function (id) {  
+    // ...  
+  }) 
+  ```
+
+
+
+### 前端优化方法
+
+（1） 减少http请求次数：CSS Sprites, JS、CSS源码压缩、图片大小控制合适；网页Gzip，CDN托管，data缓存 ，图片服务器。代码重构
+
+（2） 前端模板 JS+数据，减少由于HTML标签导致的带宽浪费，前端用变量保存AJAX请求结果，每次操作本地变量，不用请求，减少请求次数
+
+（3） 用innerHTML代替DOM操作，减少DOM操作次数，优化javascript性能。
+
+（4） 当需要设置的样式很多时设置className而不是直接操作style。
+
+（5） 少用全局变量、缓存DOM节点查找的结果。减少IO读取操作。
+
+（6） 避免使用CSS Expression（css表达式)又称Dynamic properties(动态属性)。
+
+（7）图片预加载，将样式表放在顶部，将脚本放在底部，加上时间戳
+
+
+
+## vue面试题
+
+一：什么是MVVM
+
+MVVM是是Model-View-ViewModel的缩写，Model代表数据模型，定义数据操作的业务逻辑，View代表视图层，负责将数据模型渲染到页面上，ViewModel通过双向绑定把View和Model进行同步交互，不需要手动操作DOM的一种设计思想。
+
+二：MVVM和MVC区别？和其他框架(jquery)区别？那些场景适用？
+
+MVVM和MVC都是一种设计思想，主要就是MVC中的Controller演变成ViewModel,，MVVM主要通过数据来显示视图层而不是操作节点，解决了MVC中大量的DOM操作使页面渲染性能降低，加载速度慢，影响用户体验问题。主要用于数据操作比较多的场景。
+
+三：Vue的优缺点是什么
+
+优点：低耦合，可重用性，独立开发，可测试，渐进式
+
+缺点：不利于SEO，社区维护力度不强，相比还不够成熟
+
+三：组件之间传值
+
+父向子传值：属性传值，父组件通过给子组件标签上定义属性，子组件通过props方法接收数据；
+
+子向父传值：事件传值，子组件通过$emit(‘自定义事件名’，值)，父组件通过子组件上的@自定义事件名=“函数”接收
+
+非父子组件传值：全局定义bus，var bus=new Vue() ; 发送者， bus.$emit(‘自定义名’，值) ；接受者，bus.$on(‘自定义名’，(值)=>{})
+
+四：路由之间传参
+
+路由字典中：routes={path:’/detail/:id’,component:Detail}
+
+标签中：<router-link :to=”‘/detail/’+item.id ”>
+
+Js中：this.$route.params.id
+
+五：axios的特点和使用
+
+特点：基于promise的Http库，支持promise的所有API，用来请求和响应数据的，而且对响应回来的数据自动转化为json类型，安全性较高，客户端支持防御XRSF(跨站请求伪造)，默认不携带cookie;
+
+使用：下载包后引入 import axios from ‘axios’ , 让其携带cookie ，axios.defaults.withCredentials=true, 然后添加到prototype中，Vue.prototype.$axios=axios ,组建中不用引入直接使用this.$axios.get(url,{params:{id:1}})。
+
+六：Vuex是什么？怎么使用？用于哪些场景？
+
+Vuex是框架中状态管理；新建目录store...export,然后main.js引入store再注入到vue实例中；用于购物车，登录状态，单页应用等。
+
+七：Vuex有哪几种属性？
+
+五种：state，action，mutation，getter，module
+
+State：数据源存放地，数据是响应式的
+
+Action: 逻辑处理，提交的是mutation,包含任意异步操作
+
+Mutation: 修改state里的公共数据
+
+Getter: 相当于计算属性，可以复用，可缓存
+
+Module: 模块化
+
+八：Vuex取值
+
+This.$store.state.city
+
+This.$store.commit(‘getData’)
+
+this.$store.dispath(‘getData’)
+
+This.$store.getters.getData
+
+九：不使用vuex会带来什么问题？
+
+可维护性下降，可读性下降，增加耦合
+
+十：v-show和v-if指令的共同点和不同点
+
+V-show指令是通过修改元素的display的css样式使其显示隐藏
+
+V-if指令是销毁和重建DOM达到让元素显示隐藏
+
+十一：如何让css只在当前组件中起作用?
+
+将当前组件的<style>修改为<style scoped>
+
+十二：<keep-alive></keep-alive>的作用是什么，如何使用？
+
+包裹动态组件时，会缓存不活动的组件实例，主要用于保留组件状态或避免重新渲染；
+
+使用：简单页面时
+
+缓存：  <keep-alive include=”组件名”></keep-alive>
+
+不缓存：<keep-alive exclude=”组件名”></keep-alive>
+
+使用：复杂项目时
+
+路由字典中定义{path:’/detail’,meta:{keepAlive:false/true}} 是否缓存
+
+根目录中：
+
+<keep-alive><router-view v-if=”$route.meta.keepAlive”></router-view></keep-alive>
+
+<keep-alive><router-view v-if=” ! $route.meta.keepAlive”></router-view></keep-alive>
+
+ 
+
+十三：Vue数据双向绑定原理
+
+Vue数据双向绑定是通过数据劫持结合发布者-订阅者模式方式来实现的，语法主要有{{}}和v-model。首先用递归方法遍历所有的属性值，再用Object.defineProperty()给属性绑定getter和setter方法添加一个observe(val)监听器对数据进行劫持监听;然后创建一个订阅器来在getter里收集订阅者并创建和绑定watcher，如果数据变化，订阅者就会执行自己对应的更新函数;watcher就是在自身实例化的时候往订阅器里添加自己，自身必须有一个update的数据，是监听器和模板渲染的通信桥梁;最后创建解析模板指令compile，替换数据，初始化视图。最终observer来监听自己的model数据变化通过compile解析编译模板指令，利用watcher搭起observer和compile之间的通信桥梁，达到数据变化->视图更新双向绑定效果。
+
+十四：Vue生命周期
+
+vue生命周期就是从开始创建，初始化数据，编译模板，挂载DOM，渲染->更新->渲染，销毁等一系列过程。生命周期钩子如下：
+
+组件实例周期：
+
+BeforeCreate：实例初始化后，无法访问方法和数据；
+
+Created：实例创建完成，可访问数据和方法，注意，假如有某些数据必须获取才允许进入页面的话，并不适合；
+
+beforeMonut：挂载DOM之前
+
+Mounted :el被新创建的vm.$el替换，可获取dom，改变data，注意，beforeRouterEnter的next的钩子比mountend触发靠后；
+
+beforeUpdate：数据更新时调用，发生在虚拟DOM重新渲染前；
+
+Updated：数据更改后，可以执行依赖于DOM的操作，注意，应该避免在此期间更改状态，可能会导致更新无限循环；
+
+beforeDestroy：实例销毁之前，这一步还可以用this获取实例，一般在这一步做重置操作，比如清定时器监听dom事件；
+
+Destroyed：实例销毁后，会解除绑定，移除监听。
+
+十五：路由钩子
+
+全局路由钩子：
+
+Router.beforeEach((to,from,next)=>{... next()})
+
+注意：一定要调用next(),否则页面卡在那，一般用于对路由跳转前进行拦截，参数：
+
+To：即将要进入的目标路由对象    From：当前导航正要离开的路由
+
+Next()：跳转下一个页面      next(‘/path’)：跳转指定路由
+
+Next(false)：返回原来页面  next((vm)=>{})：且在beforeRouterEnter用
+
+比如根据登录状态跳转页面判断(to.name->name是路由名)
+
+Router.beforeEach(function(to,from,next){if(to.name==’login’){..}next();})
+
+Router.afterEach((to,from)=>{}) 跳转后调用没有next方法
+
+组件路有钩子：
+
+beforeRouteEnter(to,from,next){next(vm=>{...})} 路由跳转时
+
+注意：此钩子在beforeCreate之前执行，但是next在组件mounted周期之后,无法直接调用this访问组件实例，可用next访问vm实例，修改数据；
+
+beforeRouteLeave(to,from,next){...next()} 离开路由时
+
+注意：可以直接访问this,next不可回调
+
+beforeRouteUpdate 路由切换时
+
+十六：指令周期
+
+Bind：一次初始化调用          inserted：被绑定元素插入父节点调用
+
+Update：模板更新调用         unbind：指令与元素解绑时
+
+Vue.nextTick：在dom更新后执行，一般用于dom操作
+
+Vue.$nextTick：一直到真实的dom渲染结束后执行
+
+Ex:created(){this.$nextTick(()=>{...})}
+
+十七：生命周期的作用是什么？
+
+它的生命周期有多个事件钩子，让我们在控制整个Vue实例的过程时更容易形成好的逻辑。
+
+十八：第一次加载会触发哪几个钩子？
+
+会触发beforeCreate , created ,beforeMount ,mounted
+
+十九：说出至少4种vue当中的指令和用法？
+
+V-if：判断是否隐藏         v-for：数据循环                v-bind：绑定属性
+
+v-model：双向绑定          v-is：动态组件特殊特性 v-on：事件绑定
+
+二十：vue-loader是什么？用途有哪些？
+
+是解析vue文件的一个加载器，用途是js可以写es6，style样式可以scss或less，template可以加jade
+
+二十一：active-class是那个组件属性？
+
+Vue-router模块的router-link组件,设置激活时样式
+
+二十二：vue中使用插件的步骤是什么？
+
+Inport ... from ... 引入插件，Vue.use(...)全局注册
+
+二十三：为什么使用key？
+
+当有相同标签名和元素切换时，需要通过key特性设置唯一的值来标记让vue区分它们，否则vue为了效率只会替换相同标签内部的内容
+
+二十三：为什么避免v-if和v-for用在一起？
+
+当vue处理指令时，v-for比v-if具有更高的优先级，通过v-if移动到容器的元素，不会在重复遍历列表中的每个值，取而代之的是，我们只检查它一次，且不会v-if为否的时候运算v-for
+
+二十四：VNode是什么？虚拟DOM是什么？
+
+Vue在页面上渲染的节点，及其子节点称为虚拟节点，简称VNode；虚拟DOM时由组件树建立起来的整个VNode树的称呼
+
+二十五：scss是什么？有哪些特性？怎么使用？
+
+是css的预编译，特新有可以用变量($变量名=值)，可以用混合器()，可以嵌套，可以继承，可以运算，安装先装css-loader，node-loader，sass-loader，在webpack.base配置，style标签上加lang=”scss”
+
+二十五：Vue router如何实现跳转
+
+<router-link></router-link>   router.push(‘/’)      router.go(0)
+
+二十六：vue router跳转和location.href有什么区别？
+
+Router是hash改变；location.href是页面跳转，刷新页面
+
+ 二十七：v-model原理
+
+<input v-model="sth">
+
+==相当于通过oninput(用户输入时触发)把表单值给到变量
+
+<input v-bind:value="sth" v-on:input="sth=$event.target.value">
+
+二十八：vue的template的理解
+
+通过compile编译template生成AST语法树，AST语法树经过generate转化为render function字符串后返回虚拟DOM节点(Vnode)的过程
+
+二十九：vue和react区别
+
+相同点：
+
+都鼓励组件化，都有’props’的概念，都有自己的构建工具，Reat与Vue只有框架的骨架，其他的功能如路由、状态管理等是框架分离的组件。
+
+不同点：
+
+React：数据流单向，语法—JSX，在React中你需要使用setState()方法去更新状态
+
+Vue：数据双向绑定，语法--HTML，state对象并不是必须的，数据由data属性在Vue对象中进行管理。适用于小型应用，但对于对于大型应用而言不太适合。
+
+三十：单页面和多页面的区别
+
+单页面：
+
+整个项目中只有一个完整的HTML页面，其它"页面"只是一段HTML片断而已
+
+优: 请求少
+
+缺: 不利于搜索引擎优化
+
+页面跳转本质：把当前DOM树中某个DIV删除，下载并挂载另一个div片断
+
+多页面：
+
+项目中有多个独立的完整的HTML页面
+
+缺: 请求次数多，效率低
+
+页面跳转本质:
+
+删除旧的DOM树，重新下载新的DOM树
+
+ 三十一：Vue的SPA如何优化加载速度
+
+减少入口文件体积，静态资源本地缓存，开启Gzip压缩，使用SSR，nuxt.js
+
+三十二：Axios发送post请求
+
+Import qs from ‘qs’
+
+Var data=qs.stringify({
+
+Number : ’1’
+
+})
+
+Axios.post(url,data).then()
+
+VUE如何自定义属性
+
+全局自定义：
+
+Vue.directive(‘focus’,{
+
+         Inserted:function(el){
+    
+                   el.focus()  //聚焦函数
+
+}       
+
+})
+
+三十三：组件自定义
+
+directive{
+
+         inserted:function(el){
+    
+                   el.focus() 
+
+}
+
+}
+
+三十四：Vue和vuex 有什么区别
+
+Vue是框架，vuex是插件，vuex是专门为vue应用程序开发的状态管理模式
+
+三十五：.Vuex中actions和mutations的区别
+
+Mutations的更改是同步更改，用于用户执行直接数据更改，this.$store.commit(‘名’)触发
+
+Actions的更改是异步操作，用于需要与后端交互的数据更改,this.$store.dispath(“名”)触发
+
+注意：
+
+1)：定义actions方法创建一个更改函数时，这个函数必须携带一个context参数，用于触发mutations方法，context.commit(‘修改函数名’ , ’异步请求值’)；
+
+2)：mutations第一个参数必须传入state，第二个参数是新值
+
+
+
+**1.css只在当前组件起作用**
+答：在style标签中写入**scoped**即可 例如：<style scoped></style>
+
+**2.v-if 和 v-show 区别**
+答：v-if按照条件是否渲染，v-show是display的block或none；
+
+**3.$route和$router的区别**
+答：$route是“路由信息对象”，包括path，params，hash，query，fullPath，matched，name等路由信息参数。而$router是“路由实例”对象包括了路由的跳转方法，钩子函数等。
+
+**4.vue.js的两个核心是什么？**
+答：数据驱动、组件系统
+
+**5.vue几种常用的指令**
+答：v-for 、 v-if 、v-bind、v-on、v-show、v-else
+
+**6.vue常用的修饰符？**
+答：.prevent: 提交事件不再重载页面；.stop: 阻止单击事件冒泡；.self: 当事件发生在该元素本身而不是子元素的时候会触发；.capture: 事件侦听，事件发生的时候会调用
+
+**7.v-on 可以绑定多个方法吗？**
+答：可以
+
+**8.vue中 key 值的作用？**
+答：当 Vue.js 用 v-for 正在更新已渲染过的元素列表时，它默认用“就地复用”策略。如果数据项的顺序被改变，Vue 将不会移动 DOM 元素来匹配数据项的顺序， 而是简单复用此处每个元素，并且确保它在特定索引下显示已被渲染过的每个元素。key的作用主要是为了高效的更新虚拟DOM。
+
+**9.什么是vue的计算属性？**
+答：在模板中放入太多的逻辑会让模板过重且难以维护，在需要对数据进行复杂处理，且可能多次使用的情况下，尽量采取计算属性的方式。好处：①使得数据处理结构清晰；②依赖于数据，数据更新，处理结果自动更新；③计算属性内部this指向vm实例；④在template调用时，直接写计算属性名即可；⑤常用的是getter方法，获取数据，也可以使用set方法改变数据；⑥相较于methods，不管依赖的数据变不变，methods都会重新计算，但是依赖数据不变的时候computed从缓存中获取，不会重新计算。
+
+**10.vue等单页面应用及其优缺点**
+答：优点：Vue 的目标是通过尽可能简单的 API 实现响应的数据绑定和组合的视图组件，核心是一个响应的数据绑定系统。MVVM、数据驱动、组件化、轻量、简洁、高效、快速、模块友好。
+缺点：不支持低版本的浏览器，最低只支持到IE9；不利于SEO的优化（如果要支持SEO，建议通过服务端来进行渲染组件）；第一次加载首页耗时相对长一些；不可以使用浏览器的导航按钮需要自行实现前进、后退。
+
+**11.怎么定义 vue-router 的动态路由? 怎么获取传过来的值**
+答：在 router 目录下的 index.js 文件中，对 path 属性加上 /:id，使用 router 对象的 params.id 获取。
+
+
+
+### Vue的路由实现：hash模式 和 history模式
+
+**hash模式：**在浏览器中符号“#”，#以及#后面的字符称之为hash，用window.location.hash读取；
+特点：hash虽然在URL中，但不被包括在HTTP请求中；用来指导浏览器动作，对服务端安全无用，hash不会重加载页面。
+hash 模式下，仅 hash 符号之前的内容会被包含在请求中，如 [http://www.xxx.com](http://www.xxx.com/)，因此对于后端来说，即使没有做到对路由的全覆盖，也不会返回 404 错误。
+
+**history模式：**history采用HTML5的新特性；且提供了两个新方法：pushState（），replaceState（）可以对浏览器历史记录栈进行修改，以及popState事件的监听到状态变更。
+history 模式下，前端的 URL 必须和实际向后端发起请求的 URL 一致，如 <http://www.xxx.com/items/id>。后端如果缺少对 /items/id 的路由处理，将返回 404 错误。**Vue-Router 官网里如此描述：**“不过这种模式要玩好，还需要后台配置支持……所以呢，你要在服务端增加一个覆盖所有情况的候选资源：如果 URL 匹配不到任何静态资源，则应该返回同一个 index.html 页面，这个页面就是你 app 依赖的页面。”
+
+
+
+### 什么是keep-alive
+
+**keep-alive**是 Vue 内置的一个组件，可以使被包含的组件保留状态，或避免重新渲染。
 
 
 
 
 
+### js的延迟加载有哪些？
+
+**1.defer属性**
+
+**2.async属性**
+
+**3.动态创建DOM方式**
+
+**4.使用Jquery的getScript()方法**
+
+**5.使用setTimeout延迟方法的加载时间**
+
+**6.让js最后加载**
+
+
+
+### null和undefined的区别？
+
+null： Null类型，代表“空值”，代表一个空对象指针，使用typeof运算得到 “object”，所以你可以认为它是一个特殊的对象值。
+
+undefined： Undefined类型，当一个声明了一个变量未初始化时，得到的就是undefined。
+
+null是javascript的**关键字，**可以认为是对象类型，它是一个空对象指针，和其它语言一样都是代表“空值”，不过 undefined 却是javascript才有的。undefined是在ECMAScript第三版引入的，为了区分空指针对象和未初始化的变量，它是一个预定义的**全局变量**。没有返回值的函数返回为undefined，没有实参的形参也是undefined。
 
 
 
