@@ -694,7 +694,7 @@ setTimeout 会比 promise后执行
 
 *  `bind() `的事件绑定是只对当前页面选中的元素有效，不能对动态创建的元素绑定事件，使用 `unbind() ` 取消事件；
 
-* `on() `绑定单事件、多事件、多事件多函数绑定、使用 `on `进行事件委托；使用 `0ff() ` 取消事件；
+* `on() ` 绑定单事件、多事件、多事件多函数绑定、使用 `on `进行事件委托；使用 `0ff() ` 取消事件；
 
   ```js
   <button id="add" type="button">add DIV</button>
@@ -704,7 +704,7 @@ setTimeout 会比 promise后执行
   })；
   ```
 
-* `delegate() `的事件是利用事件冒泡，事件绑在父元素上，获得目标元素
+* `delegate() ` 的事件是利用事件冒泡，事件绑在父元素上，获得目标元素
 
 ```bash
 不同点：
@@ -723,7 +723,7 @@ bind动态生成的新子元素必须反复绑定
 
 - *， ie6,ie7可以识别；
 -    _和- ，  ie6可以识别；
-- ​    !important  ,表示高优先级，ie7及以上，firefox都支持，ie6认识带!important的样式属性，但不认识!important的优先级；
+- !important  ,表示高优先级，ie7及以上，firefox都支持，ie6认识带!important的样式属性，但不认识!important的优先级；
 - -webkit- ，针对safari，chrome浏览器的内核CSS写法
 - -moz-，针对firefox浏览器的内核CSS写法
 - -ms-，针对ie内核的CSS写法

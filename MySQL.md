@@ -36,7 +36,84 @@
 - 列(col): 具有相同数据类型的数据的集合;
 - 行(row): 每一行用来描述某条记录的具体信息;
 - 值(value): 行的具体信息, 每个值必须与该列的数据类型相同;
-- **键(key)**: 键的值在当前列中具有唯一性。
+- 键(key): 键的值在当前列中具有唯一性。
+
+
+
+## mysql命令列表：
+
+请注意，所有文本命令必须在第一行以“；”结尾。
+
+是吗？（？）“帮助”的同义词。
+
+清除（\c）清除当前输入语句。
+
+连接（\r）重新连接到服务器。可选参数为db和host。
+
+分隔符（\d）set语句分隔符。
+
+用$editor编辑（\e）edit命令。
+
+ego（\g）向mysql服务器发送命令，垂直显示结果。
+
+退出（\q）退出MySQL。和戒烟一样。
+
+go（\g）向mysql服务器发送命令。
+
+帮助（\h）显示此帮助。
+
+nopager（\n）禁用寻呼机，打印到stdout。
+
+注意（\t）不要写入外文件。
+
+寻呼机（\p）设置寻呼机[到寻呼机]。通过寻呼机打印查询结果。
+
+print（\p）打印当前命令。
+
+prompt（\r）更改MySQL提示。
+
+退出（\q）退出MySQL。
+
+重新生成完成哈希。
+
+源（\.）执行SQL脚本文件。将文件名作为参数。
+
+状态（\s）从服务器获取状态信息。
+
+系统（\！）执行系统shell命令。
+
+tee（\t）设置outfile[到\u outfile]。将所有内容附加到给定的outfile中。
+
+使用（\u）使用另一个数据库。以数据库名称为参数。
+
+charset（\c）切换到另一个charset。可能需要使用多字节字符集处理binlog。
+
+警告（\w）在每个语句后显示警告。
+
+nowarning（\w）不在每个语句后显示警告。
+
+ResetConnection（\x）清理会话上下文。
+
+
+
+
+
+## 安装变量配置
+
+* 我们需要设置的位置为：`/usr/local/mysql/bin`，此处有 `mysql `文件，你可以进入此位置查看下
+
+* 在 terminal (终端) 里面执行 ` vim ~/.bash_profile` 语句
+
+* 此时可以看到` .bash_profile`的文本内容，在最后面部分添加 `PATH=$PATH:/usr/local/mysql/bin`，添加完成后，按 `esc `键，然后输入`:wq`，进行保存退出。
+
+* 最后在命令行输入 `source ~/.bash_profile`  使得环境变量可以立即生效，当然你可以关闭 terminal 再重新打开也是可以的；
+
+* 最后，你就可以通过 `mysql -u root -p`这段命令登录`MySQL 了，再输入密码；
+
+* 此时你可以最好通过下面的命令修改密码；
+
+  `SET PASSWORD FOR 'root'@'localhost' = PASSWORD('newPassword');`
+  // newPassword 是你想要的新密码
 
 
 
