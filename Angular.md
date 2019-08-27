@@ -624,8 +624,6 @@ Angular 应用程序由一棵组件树组成，每个 Angular 组件都有一个
 
 
 
-
-
 ### 生命周期
 
  使用构造函数新建一个组件或指令后，就会按下面的顺序在特定时刻调用这些生命周期钩子方法：
@@ -640,3 +638,176 @@ Angular 应用程序由一棵组件树组成，每个 Angular 组件都有一个
 | `ngAfterViewInit()`       | 当 Angular 初始化完组件视图及其子视图之后调用。第一次 `ngAfterContentChecked()` 之后调用，只调用一次。 |
 | `ngAfterViewChecked()`    | 每当 Angular 做完组件视图和子视图的变更检测之后调用。`ngAfterViewInit()` 和每次 `ngAfterContentChecked()` 之后调用。 |
 | `ngOnDestroy()`           | 每当 Angular 每次销毁指令/组件之前调用并清扫。 在这儿反订阅可观察对象和分离事件处理器，以防内存泄漏。在 Angular 销毁指令/组件之前调用。 |
+
+
+
+### 服务端渲染
+
+**Angular Universal** 
+
+标准的 Angular 应用会运行在*浏览器*中，它会在 DOM 中渲染页面，以响应用户的操作。 而 **Angular Universal** 会在*服务端*运行，生成一些*静态*的应用页面，稍后再通过客户端进行启动。 这意味着该应用的渲染通常会更快，让用户可以在应用变得完全可交互之前，先查看应用的布局。
+
+
+
+* **创建服务端应用模块**
+
+创建服务端应用模块 `app.server.module.ts`, 输入
+
+```bash
+$ ng add @nguniversal/express-engine --clientProject angular.io-example
+```
+
+之后该命令回城成如下结构
+
+```src/
+src /
+	index.html                 *app web page*
+	main.ts                    *bootstrapper for client app*
+	main.server.ts             ** bootstrapper for server app*
+	style.css                  *styles for the app*
+	app/ ...                   *application code*
+		app.server.module.ts     ** server-side application module*
+server.ts                    ** express web server*
+tsconfig.json                *TypeScript client configuration*
+tsconfig.app.json            *TypeScript client configuration*
+tsconfig.server.json         ** TypeScript server configuration*
+tsconfig.spec.json           *TypeScript spec configuration*
+package.json                 *npm configuration*
+webpack.server.config.js     ** webpack server configuration*
+```
+
+注意： **  的文件都是新增的，不是原始的教程中的
+
+
+
+**Angular为何需要服务端渲染？**
+
+有三个主要的理由来为你的应用创建一个 Universal 版本。
+
+1. 通过[搜索引擎优化(SEO)](https://static.googleusercontent.com/media/www.google.com/en//webmasters/docs/search-engine-optimization-starter-guide.pdf)来帮助网络爬虫。
+2. 提升在手机和低功耗设备上的性能
+3. 迅速显示出第一个支持[首次内容绘制(FCP)](https://developers.google.com/web/tools/lighthouse/audits/first-contentful-paint)的页面
+
+
+
+
+
+### 原理图 Scheematic
+
+**概念**：原理图是一个基于模板的支持复杂逻辑的代码生成器。它是一组通过生成代码或修改代码来转换软件项目的指令。
+
+
+
+原理图的集合可以作为一个强大的工具，以创建、修改和维护任何软件项目，特别是当要自定义 Angular 项目以满足你自己组织的特定需求时，
+
+比如：借助原理图来用预定义的模板或布局生成常用的 UI 模式或特定的组件。
+
+
+
+#### Angular CLI 中的原理图
+
+[Angular CLI](https://www.angular.cn/guide/glossary#cli) 使用原理图对 Web 应用项目进行转换。 你可以修改这些原理图，并定义新的原理图，比如更新代码以修复依赖中的重大变更，或者把新的配置项或框架添加到现有的项目中。
+
+
+
+`@schematics/angular` 集合中的原理图是 `ng generate` 和 `ng add` 命令的默认原理图。此包里包含一些有名字的原理图，可用于配置 `ng generate` 子命令的选项，比如 `ng generate component` 和 `ng generate service` 。`ng generate` 的子命令是相应原理图的简写。你可以用长格式来指定要生成的原理图（或原理图集合）
+
+
+
+```bash
+$ ng generate my-schematic-collection:my-schematic-name ng generate my-schematic-collection:my-schematic-name
+```
+
+or
+
+```bash
+$ ng generate my-schematic-name --collection collection-name
+```
+
+#### 配置 CLI 的原理图
+
+与原理图相关联的 JSON 模式会告诉 Angular CLI 命令和子命令都有哪些选项以及默认值。这些默认值可以通过在命令行中为该选项提供不同的值来进行覆盖。要了解如何更改代码生成选项的默认值，请参见“ [工作区配置](https://www.angular.cn/guide/workspace-config) ”。
+
+
+
+CLI 中那些用来生成项目及其部件的默认原理图，其 JSON 模式收集在 [`@schematics/angular`](https://raw.githubusercontent.com/angular/angular-cli/v7.0.0/packages/schematics/angular/application/schema.json) 包中。该模式描述了 CLI 中每个可用的 `ng generate` 子命令选项，如 `--help` 输出中所示。
+
+
+
+#### 编写库的原理图
+
+作为一名库开发人员，你可以创建自己的自定义原理图集合，以便把你的库与 Angular CLI 集成在一起。
+
+- *添加（Add）原理图*允许开发人员使用 `ng add` 在 Angular工作空间中安装你的库。
+
+- *生成（Generation）原理图*可以告诉 `ng generate` 子命令如何修改项目、添加配置和脚本，以及为库中定义的工件提供脚手架。
+
+- *更新（Update）原理图*可以告诉 `ng update` 命令，如何更新库的依赖，并在发布新版本时调整其中的破坏性变更。
+
+
+
+要了解它们的更多细节以及如何创建它们，请参阅：
+
+- [创作原理图](https://www.angular.cn/guide/schematics-authoring)
+- [库的原理图](https://www.angular.cn/guide/schematics-for-libraries)
+
+
+
+#### 添加（Add）原理图
+
+库中通常都会提供一个添加原理图，以便通过 `ng add` 把这个库添加到现有项目中。`add` 命令会运行包管理器来下载新的依赖，并调用一个原理图形式的安装脚本。
+
+
+
+例如，[`@angular/material`](https://material.angular.io/guide/schematics) 原理图会要求 `add` 命令安装并设置 Angular Material 及其主题，并注册可通过 `ng generate` 创建的新启动器组件。你可以把它作为自己的 "添加原理图" 的范例。
+
+
+
+合作伙伴和第三方库也可以通过添加原理图来支持 Angular CLI。例如，`@ng-bootstrap/schematics` 会把 [ng-bootstrap](https://ng-bootstrap.github.io/) 添加到应用中，`@clr/angular`会安装并设置 [VMWare 的 Clarity](https://vmware.github.io/clarity/documentation/v1.0/get-started) 。
+
+
+
+"添加原理图" 还可以通过更改配置、添加额外依赖（比如腻子脚本），或者添加程序包特有的初始化代码来修改项目。例如，`@angular/pwa` 原理图会通过添加一个应用清单（manifest）和 Service Worker，来把你的应用变成一个 PWA，`@angular/elements` 原理图添加了 `document-register-element.js` 腻子脚本和 Angular Elelments 的依赖项。
+
+
+
+#### 生成（Generation）原理图
+
+生成器原理图是 `ng generate` 的操作指令。 那些已经有文档的子命令会使用默认的 Angular 生成器原理图，但你可以在子命令中指定另一个原理图来生成你的库中定义的那些工件。
+
+
+
+例如，Angular Material 为它定义的一些 UI 组件提供了生成器原理图。下面的命令会使用其中一个原理图来渲染一个 Angular Material 的 `<mat-table>` 组件，它预先配置了一个用于排序和分页的数据源。
+
+```bash
+$ ng generate @angular/material:table 
+```
+
+
+
+#### 更新原理图
+
+`ng update` 命令可以用来更新工作空间的库依赖。
+
+
+
+更新 Angular Material 库。
+
+```bash
+$ ng update @angular/material
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
