@@ -40,7 +40,7 @@
 
 
 
-## mysql命令列表：
+## mysql命令行：
 
 请注意，所有文本命令必须在第一行以“；”结尾。
 
@@ -138,6 +138,57 @@ ResetConnection（\x）清理会话上下文。
 -- insert into user (username,password) values ("zhaosi", "789")
 -- delete from user where id=5
 -- update user set password=666 where id=4
+```
+
+#### 语句
+
+基本查询： select * from 《表名》
+
+条件查询： select * from  《表名》 where 《条件表达式》
+
+投影查询： 
+
+​		只希望返回某些列的数据，而不是所有列的数据：SELECT 列1, 列2, 列3 FROM ....
+
+​																					or ： SELECT 列1 别名1, 列2 别名2, 列3 别名3 FROM ...
+
+​			
+
+排序： `ORDER BY` 
+
+分页查询： limit <M> offset <N>
+
+聚合查询：select cont(*) from《表名》
+
+多表查询： select * from <表1> <表2>
+
+插入:  insert into <表名> (字段1, 字段2, ...) values (值1, 值2, ...);
+
+更新：update <表名> set 字段1=值1, 字段2=值2, ... WHERE ...
+
+删除： delete from <表名> WHERE ...;
+
+要创建一个新数据库，使用命令：
+
+```
+mysql> CREATE DATABASE test;
+Query OK, 1 row affected (0.01 sec)
+```
+
+要删除一个数据库，使用命令：
+
+```
+mysql> DROP DATABASE test;
+Query OK, 0 rows affected (0.01 sec)
+```
+
+注意：删除一个数据库将导致该数据库的所有表全部被删除。
+
+对一个数据库进行操作时，要首先将其切换为当前数据库：
+
+```
+mysql> USE test;
+Database changed
 ```
 
 
